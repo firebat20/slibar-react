@@ -1,11 +1,11 @@
 name: "Setup Environment"
 description: Setup the environment for compiling the solution
+
 runs:
   using: composite
   steps:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: "1.24" # Consider using go-version-file: 'src/go.mod' if your go.mod is in ./src
-        cache: true # Enable Go module and build caching for faster builds.
-
+        go-version-file: 'src/go.mod' # Reads Go version from src/go.mod
+        cache: true
