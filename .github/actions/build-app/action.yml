@@ -25,8 +25,3 @@ runs:
       working-directory: ./src
       shell: bash
       run: npm run build
-
-    - name: Run astilectron-bundler
-      working-directory: ./src
-      shell: bash
-      run: ./astilectron-bundler # This bundles the Go app and the built frontend assets
