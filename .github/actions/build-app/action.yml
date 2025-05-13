@@ -6,43 +6,34 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        # Specify the Node.js version required by your project.
-        # Consider using a .nvmrc file and node-version-file: '.nvmrc'
         node-version: '18.x'
-        cache: 'npm' # Or 'yarn' if you use Yarn
-        # Adjust the path to your lock file if package.json is not in './src'
-        cache-dependency-path: src/package-lock.json # Or src/yarn.lock
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
 
     - name: Install frontend dependencies
-      # Adjust working-directory if your package.json is not in './src'
-      working-directory: ./src
+      working-directory: ./frontend
       shell: bash
-      # 'npm ci' is recommended for CI for faster, more reliable builds.
       run: npm ci
 
     - name: Build frontend assets
-      # Adjust working-directory if your package.json is not in './src'
-      working-directory: ./src
+      working-directory: ./frontend
       shell: bash
       run: npm run build
 
     - name: Build Go application for Windows
-      working-directory: ./src # Assumes go.mod is in ./src
       shell: bash
       run: |
-        mkdir -p output/windows-amd64
-        GOOS=windows GOARCH=amd64 go build -v -o output/windows-amd64/switch-library-manager.exe .
+        mkdir -p build/windows
+        GOOS=windows GOARCH=amd64 go build -v -o build/windows/switch-library-manager.exe .
 
     - name: Build Go application for Linux
-      working-directory: ./src # Assumes go.mod is in ./src
       shell: bash
       run: |
-        mkdir -p output/linux-amd64
-        GOOS=linux GOARCH=amd64 go build -v -o output/linux-amd64/switch-library-manager .
+        mkdir -p build/linux
+        GOOS=linux GOARCH=amd64 go build -v -o build/linux/switch-library-manager .
 
     - name: Build Go application for Mac
-      working-directory: ./src # Assumes go.mod is in ./src
       shell: bash
       run: |
-        mkdir -p output/darwin-amd64
-        GOOS=darwin GOARCH=amd64 go build -v -o output/darwin-amd64/switch-library-manager .
+        mkdir -p build/darwin
+        GOOS=darwin GOARCH=amd64 go build -v -o build/darwin/switch-library-manager .
