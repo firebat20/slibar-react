@@ -1,0 +1,32 @@
+name: "Build App"
+description: Builds the frontend and Go application
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        # Specify the Node.js version required by your project.
+        # Consider using a .nvmrc file and node-version-file: '.nvmrc'
+        node-version: '18.x'
+        cache: 'npm' # Or 'yarn' if you use Yarn
+        # Adjust the path to your lock file if package.json is not in './src'
+        cache-dependency-path: src/package-lock.json # Or src/yarn.lock
+
+    - name: Install frontend dependencies
+      # Adjust working-directory if your package.json is not in './src'
+      working-directory: ./src
+      shell: bash
+      # 'npm ci' is recommended for CI for faster, more reliable builds.
+      run: npm ci
+
+    - name: Build frontend assets
+      # Adjust working-directory if your package.json is not in './src'
+      working-directory: ./src
+      shell: bash
+      run: npm run build
+
+    - name: Run astilectron-bundler
+      working-directory: ./src
+      shell: bash
+      run: ./astilectron-bundler # This bundles the Go app and the built frontend assets

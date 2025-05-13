@@ -1,0 +1,212 @@
+/* Global Resets & Font */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+/* Theme Variables */
+:root {
+  --background-color: #ffffff;
+  --text-color: #212529;
+  --primary-accent-color: #007bff;
+  --primary-accent-text-color: #ffffff;
+  --secondary-accent-color: #6c757d;
+  --secondary-accent-text-color: #ffffff;
+  --border-color: #dee2e6;
+  --menubar-background: #f8f9fa;
+  --menubar-text: #343a40;
+  --menubar-item-hover-bg: #e9ecef;
+  --tab-nav-background: #f1f3f5;
+  --tab-button-background: #e9ecef;
+  --tab-button-text: #495057;
+  --tab-button-hover-bg: #d3d9df;
+  --tab-button-active-background: var(--primary-accent-color);
+  --tab-button-active-text: var(--primary-accent-text-color);
+  --tab-content-background: #ffffff;
+  --input-background: #ffffff;
+  --input-border-color: #ced4da;
+  --input-text-color: #495057;
+  --input-focus-border-color: #80bdff;
+  --button-background: var(--primary-accent-color);
+  --button-text-color: var(--primary-accent-text-color);
+  --button-hover-background: #0056b3;
+}
+
+.dark {
+  --background-color: #22272e; /* Darker background */
+  --text-color: #c9d1d9; /* Light grey text */
+  --primary-accent-color: #58a6ff; /* Brighter blue for dark mode */
+  --primary-accent-text-color: #ffffff;
+  --secondary-accent-color: #8b949e; /* Lighter grey for secondary elements */
+  --secondary-accent-text-color: #ffffff;
+  --border-color: #444c56; /* Darker border */
+  --menubar-background: #2d333b; /* Dark menubar */
+  --menubar-text: #c9d1d9;
+  --menubar-item-hover-bg: #373e47;
+  --tab-nav-background: #282c34; /* Dark tab navigation */
+  --tab-button-background: #373e47; /* Dark tab button */
+  --tab-button-text: #c9d1d9;
+  --tab-button-hover-bg: #444c56;
+  --tab-button-active-background: var(--primary-accent-color);
+  --tab-button-active-text: var(--primary-accent-text-color);
+  --tab-content-background: #22272e; /* Dark tab content area */
+  --input-background: #2d333b;
+  --input-border-color: #444c56;
+  --input-text-color: #c9d1d9;
+  --input-focus-border-color: #58a6ff;
+  --button-background: var(--primary-accent-color);
+  --button-text-color: var(--primary-accent-text-color);
+  --button-hover-background: #1f6feb; /* Darker hover for primary button */
+}
+
+/* App Structure */
+#App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.menubar {
+  display: flex;
+  background-color: var(--menubar-background);
+  color: var(--menubar-text);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0; /* Prevent menubar from shrinking */
+}
+
+.menubar-item {
+  padding: 6px 12px;
+  margin-right: 8px;
+  border-radius: 4px;
+  user-select: none; /* Prevent text selection on click */
+  transition: background-color 0.2s ease-in-out;
+}
+
+.menubar-item:hover {
+  background-color: var(--menubar-item-hover-bg);
+  cursor: pointer;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column; /* Stack tab-nav and tab-content vertically */
+  flex-grow: 1;
+  overflow: hidden; /* Prevent layout issues with overflow */
+}
+
+.tab-navigation {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--tab-nav-background);
+  /* border-right: 1px solid var(--border-color); Removed */
+  /* width: 200px; Removed, will span width */
+  /* flex-shrink: 0; Removed */
+  /* overflow-y: auto; Removed */
+
+  /* --- Horizontal Tab Styles --- */
+  flex-direction: row;
+  padding: 5px 10px; /* Adjusted padding for horizontal bar */
+  border-bottom: 1px solid var(--border-color); /* Border at the bottom of the tab bar */
+  overflow-x: auto; /* Allow horizontal scrolling for many tabs */
+  overflow-y: hidden;
+  gap: 5px; /* Spacing between tab buttons */
+}
+
+.tab-button {
+  background-color: var(--tab-button-background);
+  color: var(--tab-button-text);
+  border: 1px solid transparent; /* Keep consistent height, border on active */
+  padding: 8px 15px; /* Adjusted padding */
+  /* margin-bottom: 5px; Removed, using gap in parent */
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: center; /* Center text for horizontal tabs */
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  font-size: 0.95rem;
+  white-space: nowrap; /* Prevent tab text from wrapping */
+}
+
+.tab-button:hover {
+  background-color: var(--tab-button-hover-bg);
+}
+.tab-button.active {
+  background-color: var(--tab-button-active-background);
+  color: var(--tab-button-active-text);
+  font-weight: 500;
+}
+
+.tab-content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: var(--tab-content-background);
+  overflow-y: auto; /* Allow scrolling for tab content if it overflows */
+}
+
+/* Styles for the Greet component part (Tab 1) */
+.result {
+  min-height: 20px; /* Ensure space even if empty */
+  line-height: 20px;
+  margin: 1.5rem auto;
+  color: var(--text-color); /* Use themed text color */
+}
+
+.input-box {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem auto;
+  max-width: 400px; /* Constrain width */
+}
+
+/* General input and button styles from your original snippet, adapted for theming */
+.input {
+  border: 1px solid var(--input-border-color);
+  border-radius: 3px;
+  outline: none;
+  height: 34px; /* Adjusted for better visual balance with button */
+  line-height: 34px;
+  padding: 0 10px;
+  background-color: var(--input-background);
+  color: var(--input-text-color);
+  font-size: 1rem;
+  flex-grow: 1;
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.input:focus {
+  border-color: var(--input-focus-border-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Optional: focus ring */
+}
+
+.btn {
+  display: inline-block;
+  padding: 0 1rem;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 36px; /* Match input height */
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  user-select: none;
+  cursor: pointer;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+}
+
+.btn:hover {
+  background-color: var(--button-hover-background);
+}
+
+/* Ensure the global style.css (from main.tsx) doesn't override too much.
+   If it does, you might need to increase specificity here or adjust style.css. */

@@ -1,0 +1,27 @@
+name: "Setup Environment"
+description: Setup the environment for compiling the solution
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: "1.24" # Consider using go-version-file: 'src/go.mod' if your go.mod is in ./src
+        cache: true # Enable Go module and build caching for faster builds.
+
+    - name: Install astilectron-bundler
+      # This step installs the astilectron-bundler executable.
+      # It will be placed in $(go env GOPATH)/bin or $(go env GOBIN) if set.
+      shell: bash
+      # Using @latest to get the newest version, similar to the previous 'go get -u'.
+      # For reproducible builds, it's highly recommended to pin this to a specific
+      # version of the bundler, e.g., github.com/asticode/go-astilectron-bundler/astilectron-bundler@vX.Y.Z
+      run: go install github.com/asticode/go-astilectron-bundler/astilectron-bundler@latest
+
+    - name: Move astilectron-bundler to src directory
+      # The build-app action expects the bundler executable in the ./src directory.
+      working-directory: ./src
+      shell: bash
+      # Use 'go env GOPATH' for robustness in locating the installed binary.
+      # This assumes astilectron-bundler is installed in the default GOPATH bin directory.
+      run: mv "$(go env GOPATH)/bin/astilectron-bundler" .
