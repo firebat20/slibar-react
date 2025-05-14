@@ -1,4 +1,4 @@
-import {useState, ChangeEvent} from 'react';
+import {useState, ChangeEvent, useRef, useEffect} from 'react';
 import './App.css';
 import {Greet} from "../wailsjs/go/main/App";
 import GreetTab from './components/GreetTab';
@@ -30,6 +30,39 @@ function App() {
         setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     };
 
+    // State for File menu dropdown
+    const [fileMenuOpen, setFileMenuOpen] = useState(false);
+    const fileMenuRef = useRef<HTMLDivElement>(null);
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (fileMenuRef.current && !fileMenuRef.current.contains(event.target as Node)) {
+                setFileMenuOpen(false);
+            }
+        }
+        if (fileMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [fileMenuOpen]);
+
+    // Dummy handlers for menu actions
+    const handleRescan = () => {
+        setFileMenuOpen(false);
+        // TODO: Implement rescan logic
+        alert('Rescan triggered');
+    };
+    const handleHardRescan = () => {
+        setFileMenuOpen(false);
+        // TODO: Implement hard rescan logic
+        alert('Hard Rescan triggered');
+    };
+
     // Define the content for your 6 tabs
     const tabs: Tab[] = [
         {
@@ -51,7 +84,52 @@ function App() {
         <div id="App" className={theme}> {/* Apply theme class here */}
             {/* Menubar */}
             <div className="menubar">
-                <div className="menubar-item">File</div>
+                <div
+                    className="menubar-item"
+                    onClick={() => setFileMenuOpen(open => !open)}
+                    ref={fileMenuRef}
+                    style={{ position: 'relative' }}
+                >
+                    File
+                    {fileMenuOpen && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                background: 'var(--menubar-background)',
+                                border: '1px solid var(--border-color)',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                zIndex: 100,
+                                minWidth: 120,
+                                borderRadius: 4,
+                                marginTop: 2,
+                            }}
+                        >
+                            <div
+                                style={{
+                                    padding: '8px 16px',
+                                    cursor: 'pointer',
+                                    userSelect: 'none',
+                                    borderBottom: '1px solid var(--border-color)'
+                                }}
+                                onClick={handleRescan}
+                            >
+                                Rescan
+                            </div>
+                            <div
+                                style={{
+                                    padding: '8px 16px',
+                                    cursor: 'pointer',
+                                    userSelect: 'none'
+                                }}
+                                onClick={handleHardRescan}
+                            >
+                                Hard Rescan
+                            </div>
+                        </div>
+                    )}
+                </div>
                 <div className="menubar-item">Debug </div>
                 <div className="menubar-item" onClick={toggleTheme} style={{ cursor: 'pointer' }}>Theme</div>
                 {/* Add more menu items as needed */}
