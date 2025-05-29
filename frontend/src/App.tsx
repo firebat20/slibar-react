@@ -1,7 +1,6 @@
 import {useState, ChangeEvent, useRef, useEffect} from 'react';
 import './App.css';
 import {Greet} from "../wailsjs/go/main/App";
-import GreetTab from './components/GreetTab';
 
 // Define a type for individual tabs for better type safety
 interface Tab {
@@ -65,11 +64,7 @@ function App() {
 
     // Define the content for your 6 tabs
     const tabs: Tab[] = [
-        {
-            id: 'tab1',
-            title: 'Library',
-            content: <GreetTab />
-        },
+        { id: 'tab1', title: 'Library', content: <div>Content for Tab 1.</div>},
         { id: 'tab2', title: 'Missing Games', content: <div>Content for Tab 2. You can put any JSX here!</div> },
         { id: 'tab3', title: 'Missing Updates', content: <div>Content for Tab 3. For example, another component.</div> },
         { id: 'tab4', title: 'Missing DLC', content: <div>Content for Tab 4.</div> },

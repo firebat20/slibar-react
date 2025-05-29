@@ -7,15 +7,65 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+          { name: "switch-library-manager.exe", platform: windows/amd64, os: windows-latest },
+          { name: "switch-library-manager", platform: linux/amd64, os: ubuntu-latest },
+          { name: "switch-library-manager", platform: darwin/universal, os: macos-latest }
+        ]
+
+    runs-on: ${{ matrix.build.os }}
     steps:
+      
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod' # go.mod is at the repository root
+          check-latest: true
 
-      - name: Build app
-        uses: ./.github/actions/build-app
+      - name: Get Go Cache Paths
+        id: go_cache_paths
+        shell: bash # Ensures bash is used for 'go env' on all OSes
+        run: |
+          echo "GOMODCACHE=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
+          echo "GOCACHE=$(go env GOCACHE)" >> $GITHUB_OUTPUT
 
-      - name: Publish artifacts
-        uses: ./.github/actions/publish-artifacts
+      - name: Cache Go Modules
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.go_cache_paths.outputs.GOMODCACHE }}
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('go.sum') }} # go.sum is at the repository root
+          restore-keys: |
+            ${{ runner.os }}-go-mod-
+
+      - name: Cache Go Build Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.go_cache_paths.outputs.GOCACHE }}
+          key: ${{ runner.os }}-go-build-${{ hashFiles('go.sum') }} # go.sum is at the repository root
+          restore-keys: |
+            ${{ runner.os }}-go-build-
+
+      - name: Set Platform Directory Name
+        id: platform_vars
+        shell: bash # Ensures bash is used for 'tr' command on all OSes
+        run: echo "PLATFORM_DIR_NAME=$(echo '${{ matrix.build.platform }}' | tr '/' '-')" >> $GITHUB_ENV
+
+      - uses: dAppServer/wails-build-action@main
+        # Consider pinning to a specific version/SHA for stability, e.g., dAppServer/wails-build-action@v1.0.0
+        with:
+          build-name: ${{ matrix.build.name }}
+          build-platform: ${{ matrix.build.platform }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: switch-library-manager.${{ env.PLATFORM_DIR_NAME }} # Use sanitized platform name for artifact
+          path: build/bin/* # Standard Wails output path, relative to project root
+          wails-build-webview2: embed
+          if-no-files-found: error
